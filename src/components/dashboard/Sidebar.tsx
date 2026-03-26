@@ -1,0 +1,188 @@
+"use client";
+
+import React, { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  LayoutDashboard, 
+  Users, 
+  Settings, 
+  FolderKanban, 
+  ShieldCheck, 
+  ChevronLeft, 
+  Sparkles,
+  UserCircle,
+  Briefcase
+} from "lucide-react";
+import { useAdmin } from "../hooks/useAdmin";
+
+
+const Sidebar = () => {
+  const [open, setOpen] = useState(true);
+  const { isAdmin, user, isLoading } = useAdmin();
+  const pathname = usePathname();
+
+  const role = user?.role;
+
+  // Active link helper
+  const isActive = (path: string) => pathname === path;
+
+  return (
+    <aside
+      className={`relative bg-white dark:bg-[#030712] border-r border-slate-200 dark:border-slate-800 h-screen transition-all duration-500 ease-in-out flex flex-col z-40 ${
+        open ? "w-72" : "w-24"
+      }`}
+    >
+      {/* Collapse Toggle */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="absolute -right-0 top-9 w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-50"
+      >
+        <ChevronLeft size={14} className={`transition-transform duration-500 ${!open ? "rotate-180" : ""}`} />
+      </button>
+
+      {/* Logo Section */}
+      <div className="p-6 mb-4">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="min-w-[40px] h-10 bg-gradient-to-tr from-indigo-600 to-pink-500 rounded-xl flex items-center justify-center shadow-indigo-500/20 shadow-lg">
+            <Sparkles className="text-white w-5 h-5" />
+          </div>
+          <AnimatePresence>
+            {open && (
+              <motion.span
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="text-xl font-black tracking-tighter dark:text-white text-slate-900"
+              >
+                REWEV<span className="text-pink-500">.</span>
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </Link>
+      </div>
+
+      {/* Navigation Links */}
+      <nav className="flex-1 px-4 space-y-2 overflow-y-auto no-scrollbar">
+        <p className={`text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 ml-2 ${!open && "text-center ml-0"}`}>
+          {open ? "Main Menu" : "•••"}
+        </p>
+
+        <SidebarItem 
+          href="/dashboard" 
+          icon={<LayoutDashboard size={20} />} 
+          label="Dashboard" 
+          open={open} 
+          active={isActive("/dashboard")} 
+        />
+
+        {/* Admin Specific Routes */}
+        {!isLoading && isAdmin && (
+          <>
+            <div className="my-4 border-t border-slate-100 dark:border-slate-800" />
+            <p className={`text-[10px] font-bold text-indigo-500 uppercase tracking-widest mb-4 ml-2 ${!open && "text-center ml-0"}`}>
+              {open ? "Management" : "Adm"}
+            </p>
+            <SidebarItem 
+              href="/dashboard/admin" 
+              icon={<ShieldCheck size={20} />} 
+              label="Admin Panel" 
+              open={open} 
+              active={isActive("/dashboard/admin")} 
+            />
+            <SidebarItem 
+              href="/dashboard/projects" 
+              icon={<FolderKanban size={20} />} 
+              label="Projects" 
+              open={open} 
+              active={isActive("/dashboard/projects")} 
+            />
+          </>
+        )}
+
+        {/* Client Routes */}
+        {role === "client" && (
+          <SidebarItem 
+            href="/dashboard/client" 
+            icon={<UserCircle size={20} />} 
+            label="Client Portal" 
+            open={open} 
+            active={isActive("/dashboard/client")} 
+          />
+        )}
+
+        {/* Collaborator Routes */}
+        {role === "collaborator" && (
+          <SidebarItem 
+            href="/dashboard/collaborator" 
+            icon={<Briefcase size={20} />} 
+            label="Team Space" 
+            open={open} 
+            active={isActive("/dashboard/collaborator")} 
+          />
+        )}
+      </nav>
+
+      {/* Bottom Section */}
+      <div className="p-4 border-t border-slate-100 dark:border-slate-800">
+        <SidebarItem 
+          href="/dashboard/settings" 
+          icon={<Settings size={20} />} 
+          label="Settings" 
+          open={open} 
+          active={isActive("/dashboard/settings")} 
+        />
+      </div>
+    </aside>
+  );
+};
+
+// --- Sub-component for Sidebar Items ---
+interface SidebarItemProps {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  open: boolean;
+  active: boolean;
+}
+
+const SidebarItem = ({ href, icon, label, open, active }: SidebarItemProps) => {
+  return (
+    <Link
+      href={href}
+      className={`group relative flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 ${
+        active 
+          ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 shadow-sm" 
+          : "text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white"
+      }`}
+    >
+      <div className={`transition-transform duration-300 ${active ? "scale-110" : "group-hover:scale-110"}`}>
+        {icon}
+      </div>
+      
+      <AnimatePresence>
+        {open && (
+          <motion.span
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            className="text-sm font-bold whitespace-nowrap"
+          >
+            {label}
+          </motion.span>
+        )}
+      </AnimatePresence>
+
+      {/* Active Indicator Pin */}
+      {active && (
+        <motion.div 
+          layoutId="active-pill"
+          className="absolute left-0 w-1 h-6 bg-indigo-600 rounded-r-full" 
+        />
+      )}
+    </Link>
+  );
+};
+
+export default Sidebar;
