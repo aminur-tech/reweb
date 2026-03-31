@@ -8,6 +8,7 @@ import {
   Layout, Server, Zap, Search
 } from "lucide-react";
 import { useAdmin } from "../hooks/useAdmin";
+import { toast } from "sonner";
 
 const API_URL = "http://localhost:5000/api/v1/techstack";
 
@@ -86,7 +87,7 @@ const Skills = () => {
       }
       fetchTechs(); // Refetch ensures correct order
       closeModal();
-    } catch (err) { alert("Action failed"); }
+    } catch (err) { toast.error("Action failed"); }
   };
 
   const handleDelete = async (id: string) => {

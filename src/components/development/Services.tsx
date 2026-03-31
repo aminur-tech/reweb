@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { Plus, Pencil, Trash2, Loader2, X, LayoutGrid, Tag } from "lucide-react";
 import { useAdmin } from "../hooks/useAdmin";
+import { toast } from "sonner";
 
 const API_URL = "http://localhost:5000/api/v1/services";
 
@@ -58,7 +59,7 @@ const Services = () => {
       }
       closeModal();
     } catch (err) {
-      alert("Action failed.");
+      toast.error("Action failed.");
     } finally {
       setIsSubmitting(false);
     }
@@ -69,7 +70,7 @@ const Services = () => {
     try {
       await axios.delete(`${API_URL}/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       setServices(services.filter((s) => s._id !== id));
-    } catch (err) { alert("Delete failed"); }
+    } catch (err) { toast.error("Delete failed"); }
   };
 
   const openEditModal = (service: Service) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Save, Globe, Github, Layers, Tag, ChevronDown } from "lucide-react";
 
 export interface ProjectFormData {
@@ -20,14 +20,26 @@ interface ProjectFormProps {
 }
 
 const ProjectForm = ({ initialData, onSubmit, loading }: ProjectFormProps) => {
-  const [formData, setFormData] = useState(initialData || {
-    title: "",
-    description: "",
-    category: "",
-    liveLink: "",
-    frontendRepo: "",
-    backendRepo: "",
-    technologies: "", // Will be converted to array on submit
+  const [formData, setFormData] = useState(() => {
+    const defaultState = {
+      title: "",
+      description: "",
+      category: "",
+      liveLink: "",
+      frontendRepo: "",
+      backendRepo: "",
+      technologies: "",
+    };
+
+    const base = initialData || defaultState;
+
+    return {
+      ...base,
+      // Ensure technologies is always a string for the input field
+      technologies: Array.isArray(base.technologies) 
+        ? base.technologies.join(", ") 
+        : base.technologies || "",
+    };
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -83,9 +95,9 @@ const ProjectForm = ({ initialData, onSubmit, loading }: ProjectFormProps) => {
 
         {/* Links */}
         <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <InputField label="Live Link" icon={<Globe size={16} />} value={formData.liveLink} onChange={(v) => setFormData({ ...formData, liveLink: v })} />
-          <InputField label="Frontend Repo" icon={<Github size={16} />} value={formData.frontendRepo} onChange={(v) => setFormData({ ...formData, frontendRepo: v })} />
-          <InputField label="Backend Repo" icon={<Layers size={16} />} value={formData.backendRepo} onChange={(v) => setFormData({ ...formData, backendRepo: v })} />
+          <InputField label="Live Link" icon={<Globe size={16} />} value={formData.liveLink || ""} onChange={(v) => setFormData({ ...formData, liveLink: v })} />
+          <InputField label="Frontend Repo" icon={<Github size={16} />} value={formData.frontendRepo || ""} onChange={(v) => setFormData({ ...formData, frontendRepo: v })} />
+          <InputField label="Backend Repo" icon={<Layers size={16} />} value={formData.backendRepo || ""} onChange={(v) => setFormData({ ...formData, backendRepo: v })} />
         </div>
 
         {/* Technologies */}
@@ -94,7 +106,7 @@ const ProjectForm = ({ initialData, onSubmit, loading }: ProjectFormProps) => {
           <input
             placeholder="React, Next.js, TypeScript, Node.js"
             className="w-full mt-1 px-6 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-indigo-500"
-            value={formData.technologies}
+            value={typeof formData.technologies === 'string' ? formData.technologies : ""}
             onChange={(e) => setFormData({ ...formData, technologies: e.target.value })}
           />
         </div>

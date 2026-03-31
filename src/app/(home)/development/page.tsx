@@ -4,7 +4,8 @@ import Services from '@/components/development/Services';
 import Skills from '@/components/development/Skills';
 import Workflow from '@/components/development/Workflow';
 import Testimonials from '@/components/development/Testimonials';
-import Contact from '@/components/development/Contact';
+import Contact from '@/components/contact/Contact';
+
 
 const Development = () => {
     return (

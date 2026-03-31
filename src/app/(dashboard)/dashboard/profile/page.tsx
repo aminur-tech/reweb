@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useSession } from "next-auth/react";
 import { Camera, Save, User, Loader2 } from "lucide-react";
+import { toast } from 'sonner';
 
 const ProfilePage = () => {
     const { data: session, update } = useSession();
@@ -27,10 +28,11 @@ const ProfilePage = () => {
             if (response.ok) {
                 // Update the NextAuth session locally
                 await update({ ...session, user: { ...session?.user, ...formData } });
-                alert("Profile updated successfully!");
+                toast.success("Profile updated successfully!");
             }
         } catch (error) {
             console.error("Update failed", error);
+            toast.error("Failed to update profile.");
         } finally {
             setLoading(false);
         }
