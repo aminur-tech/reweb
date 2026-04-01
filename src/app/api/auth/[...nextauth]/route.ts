@@ -19,37 +19,33 @@ const handler = NextAuth({
         password: {},
       },
 
-      async authorize(credentials) {
-        try {
-          const { data } = await axios.post(
-            "http://localhost:5000/api/v1/auth/login",
-            {
-              email: credentials?.email,
-              password: credentials?.password,
-            }
-          );
+      // ... inside CredentialsProvider
+async authorize(credentials) {
+  try {
+    const { data } = await axios.post(
+      "http://localhost:5000/api/v1/auth/login",
+      {
+        email: credentials?.email,
+        password: credentials?.password,
+      }
+    );
 
-          if (!data.success) {
-            throw new Error(data.message);
-          }
-
-          // ✅ Return user object
-          return {
-            id: data.data._id,
-            email: data.data.email,
-            role: data.data.role,
-            accessToken: data.token,
-          };
-        } catch (error) {
-          const err = error as AxiosError<{ message?: string }>;
-          console.error("Authorize error:", err.response?.data?.message || err.message);
-          // Instead of throwing an error, which can cause an unhandled exception
-          // in the NextAuth API route and return an HTML error page,
-          // we return null. NextAuth will then redirect to the sign-in page
-          // with a generic error message.
-          return null;
-        }
-      },
+    // If the backend sent a successful response
+    return {
+      id: data.data._id,
+      email: data.data.email,
+      role: data.data.role,
+      accessToken: data.token,
+    };
+  } catch (error) {
+    const axiosError = error as AxiosError<{ message: string }>;
+    // 🔥 FIX: Extract the message from your Express backend
+    const errorMessage = axiosError.response?.data?.message || "Invalid credentials";
+    
+    // 🔥 FIX: Throwing the error allows res.error to contain this specific string
+    throw new Error(errorMessage);
+  }
+}
     }),
   ],
 
@@ -105,7 +101,7 @@ const handler = NextAuth({
   },
 
   pages: {
-    signIn: "/auth/login",
+    signIn: "/login",
   },
 });
 
