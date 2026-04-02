@@ -23,7 +23,7 @@ const handler = NextAuth({
 async authorize(credentials) {
   try {
     const { data } = await axios.post(
-      "http://localhost:5000/api/v1/auth/login",
+      "https://re-web-server.vercel.app/api/v1/auth/login",
       {
         email: credentials?.email,
         password: credentials?.password,
@@ -59,7 +59,7 @@ async authorize(credentials) {
       if (account?.provider === "google") {
         try {
           const { data } = await axios.post(
-            "http://localhost:5000/api/v1/auth/google",
+            "https://re-web-server.vercel.app/api/v1/auth/google",
             {
               email: user.email,
               name: user.name,

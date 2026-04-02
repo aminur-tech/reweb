@@ -46,7 +46,7 @@ export default function ProjectDetails() {
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/v1/projects/${id}`);
+        const res = await axios.get(`https://re-web-server.vercel.app/api/v1/projects/${id}`);
         if (res.data.success) setProject(res.data.data);
       } catch (err) {
         toast.error("Failed to load project assets.");
@@ -64,7 +64,7 @@ export default function ProjectDetails() {
     setIsSubmitting(true);
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/v1/projects/${id}/review`,
+        `https://re-web-server.vercel.app/api/v1/projects/${id}/review`,
         { rating, comment, userName: session.user?.name,image: session.user?.image},
         { headers: { Authorization: `Bearer ${session.accessToken}` } }
       );

@@ -73,7 +73,7 @@ const ServiceHighlights = () => {
   const [activeCategory, setActiveCategory] = useState("Web Development");
   const [loading, setLoading] = useState(true);
 
-  const API_URL = "http://localhost:5000/api/v1/projects";
+  const API_URL = "https://re-web-server.vercel.app/api/v1/projects";
 
   useEffect(() => {
     const fetchProjects = async () => {

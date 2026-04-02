@@ -64,7 +64,7 @@ const DevProjects = () => {
   const [loading, setLoading] = useState(true);
 
   const PAGE_CATEGORY = "Web Development";
-  const API_URL = "http://localhost:5000/api/v1/projects";
+  const API_URL = "https://re-web-server.vercel.app/api/v1/projects";
 
   useEffect(() => {
     const fetchDevProjects = async () => {

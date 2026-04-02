@@ -22,6 +22,7 @@ const SignUpForm = () => {
         email: "",
         password: "",
         confirmPassword: "",
+        profileImg: ""
     });
 
     // --- PASSWORD VALIDATION LOGIC ---
@@ -73,10 +74,10 @@ const SignUpForm = () => {
                 name: `${formData.firstName} ${formData.lastName}`,
                 email: formData.email,
                 password: formData.password,
-                photoImg: ''
+                profileImg: formData.profileImg
             };
 
-            const { data } = await axios.post("http://localhost:5000/api/v1/auth/register", payload);
+            const { data } = await axios.post("https://re-web-server.vercel.app/api/v1/auth/register", payload);
 
             if (data.success) {
                 Swal.fire({
@@ -100,7 +101,7 @@ const SignUpForm = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const { data } = await axios.post("http://localhost:5000/api/v1/auth/verify-email", { 
+            const { data } = await axios.post("https://re-web-server.vercel.app/api/v1/auth/verify-email", { 
                 email: formData.email, 
                 code: verificationCode 
             });
