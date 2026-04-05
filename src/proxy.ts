@@ -8,14 +8,14 @@ export async function proxy(req: NextRequest) {
 
   const { pathname } = req.nextUrl;
 
-  // 🔓 Public routes
+  // Public routes
   const publicRoutes = ["/", "/login", "/register"];
 
   if (publicRoutes.includes(pathname)) {
     return NextResponse.next();
   }
 
-  // ⛔ Not logged in
+  // Not logged in
   if (!token) {
     return NextResponse.redirect(new URL("/login", req.url));
   }

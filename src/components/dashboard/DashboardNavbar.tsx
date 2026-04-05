@@ -1,16 +1,12 @@
 "use client";
-
-import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { ChevronDown, LogOut, Menu, Moon, PieChart, Settings, Sparkles, Sun, User } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Sun, Moon, LogOut, User, 
-  Settings, PieChart, ChevronDown, Sparkles 
-} from "lucide-react";
-import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
-const DashboardNavbar = () => {
+const DashboardNavbar = ({ onMenuClick }: { onMenuClick: () => void }) => {
   const { data: session } = useSession();
   const { resolvedTheme, setTheme } = useTheme();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -26,29 +22,28 @@ const DashboardNavbar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  
 
   return (
-    <header className="flex items-center justify-between px-8 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 sticky top-0 z-40">
-      {/* Left Section */}
-      <div className="flex items-center gap-3">
-        <h1 className="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
-          <Sparkles className="text-indigo-500 w-5 h-5" />
-          Welcome, <span className="text-indigo-600 dark:text-indigo-400 capitalize">{session?.user?.name?.split(" ")[0]}</span>
+    <header className="flex items-center justify-between px-4 md:px-8 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 sticky top-0 z-40">
+      <div className="flex items-center gap-4">
+        {/* Mobile Hamburger */}
+        <button onClick={onMenuClick} className="lg:hidden p-2 text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg">
+          <Menu size={20} />
+        </button>
+        
+        <h1 className="text-sm md:text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+          <Sparkles className="text-indigo-500 w-4 h-4 md:w-5 md:h-5" />
+          <span className="hidden sm:inline">Welcome, </span>
+          <span className="text-indigo-600 dark:text-indigo-400 capitalize">{session?.user?.name?.split(" ")[0]}</span>
         </h1>
       </div>
 
-      {/* Right Section */}
-      <div className="flex items-center gap-5">
-        {/* Theme Toggle */}
-        <button
-          onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-          className="p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-indigo-500 transition-all duration-300"
-          title="Toggle Theme"
-        >
-          <Sun size={18} className="hidden dark:block text-yellow-400" />
-          <Moon size={18} className="block dark:hidden" />
+      <div className="flex items-center gap-3 md:gap-5">
+        <button onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")} className="p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 transition-all">
+          {resolvedTheme === "dark" ? <Sun size={18} className="text-yellow-400" /> : <Moon size={18} />}
         </button>
-
+       
         {/* User Profile Dropdown */}
         <div className="relative" ref={dropdownRef}>
           <button
@@ -91,7 +86,7 @@ const DashboardNavbar = () => {
                 {/* Professional Routes */}
                 <div className="space-y-1">
                   <DropdownLink href="/dashboard/profile" icon={<User size={16} />} label="My Profile" />
-                  <DropdownLink href="/dashboard/analytics" icon={<PieChart size={16} />} label="AI Insights Chart" />
+
                   <DropdownLink href="/dashboard/settings" icon={<Settings size={16} />} label="Account Settings" />
                 </div>
 
@@ -114,14 +109,13 @@ const DashboardNavbar = () => {
   );
 };
 
-// Helper Component for Links
 const DropdownLink = ({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) => (
-  <Link
-    href={href}
-    className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-2xl transition-all"
+  <Link 
+    href={href} 
+    className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-2xl transition-all"
   >
-    {icon}
-    <span>{label}</span>
+    <span className="text-indigo-500">{icon}</span>
+    {label}
   </Link>
 );
 

@@ -7,7 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Menu, X, ChevronRight, Sparkles, Sun, Moon, 
   User, LayoutDashboard, PieChart, Settings, LogOut, BarChart3, 
-  User2
+  User2,
+  Brain
 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
@@ -64,10 +65,11 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "Home", href: "/" },
-    { name: "Solutions", href: "/solutions" },
+    { name: "Services ", href: "/services" },
     { name: "Research", href: "/research" },
     { name: "Development", href: "/development" },
     { name: "Ecosystem", href: "/ecosystem" },
+    {name: "Achievements", href: "/achievements"},
   ];
 
   return (
@@ -144,9 +146,9 @@ const Navbar = () => {
 
                       <div className="space-y-1">
                         <DropdownItem href="/dashboard" icon={<LayoutDashboard size={16}/>} label="User Dashboard" />
-                        <DropdownItem href="/dashboard/ai-charts" icon={<PieChart size={16}/>} label="AI Insights Chart" />
+                        <DropdownItem href="/dashboard/ai-charts" icon={<Brain size={16}/>} label="AI Insights Chart" />
                         <DropdownItem href="/dashboard/profile" icon={<User2 size={16}/>} label="Profile" />
-                        <DropdownItem href="/settings" icon={<Settings size={16}/>} label="Account Settings" />
+                        <DropdownItem href="/dashboard/settings" icon={<Settings size={16}/>} label="Account Settings" />
                       </div>
 
                       <button
@@ -179,6 +181,81 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu Content ... (similar logic using NavLink) */}
+      {/* Mobile Menu Content */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-white dark:bg-[#030712] border-b border-indigo-400/20 overflow-hidden"
+          >
+            <div className="flex flex-col gap-2 p-6">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className="flex justify-between items-center px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900/50 text-slate-700 dark:text-slate-200 font-semibold hover:text-indigo-500"
+                >
+                  {link.name}
+                  <ChevronRight size={18} className="opacity-50" />
+                </Link>
+              ))}
+
+              <hr className="my-2 border-slate-100 dark:border-slate-800" />
+
+              {/* Mobile Auth Actions */}
+              {status === "authenticated" ? (
+                <div className="flex flex-col gap-2">
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-indigo-500"
+                  >
+                    <LayoutDashboard size={18} /> Dashboard
+                  </Link>
+                  <button
+                    onClick={() => signOut()}
+                    className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-500"
+                  >
+                    <LogOut size={18} /> Logout
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-4 pt-2">
+                  <Link
+                    href="/login"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-center py-3 text-sm font-bold text-slate-600 dark:text-slate-300"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/signup"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-center py-3 bg-gradient-to-r from-indigo-500 to-pink-500 text-white text-sm font-bold rounded-xl"
+                  >
+                    Get Started
+                  </Link>
+                </div>
+              )}
+
+              {/* Mobile Theme Toggle */}
+              <button
+                onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+                className="mt-4 flex items-center justify-center gap-2 py-3 w-full rounded-xl border border-slate-200 dark:border-slate-800 text-sm font-medium dark:text-white"
+              >
+                {resolvedTheme === "dark" ? (
+                  <><Sun size={16} className="text-yellow-400" /> Light Mode</>
+                ) : (
+                  <><Moon size={16} className="text-slate-600" /> Dark Mode</>
+                )}
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };

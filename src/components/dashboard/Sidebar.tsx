@@ -1,25 +1,32 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  LayoutDashboard, 
-  Users, 
-  Settings, 
-  FolderKanban, 
-  ShieldCheck, 
-  ChevronLeft, 
+import {
+  LayoutDashboard,
+  Users,
+  Settings,
+  FolderKanban,
+  ShieldCheck,
+  ChevronLeft,
   Sparkles,
   UserCircle,
-  Briefcase
+  Briefcase,
+  Brain
 } from "lucide-react";
 import { useAdmin } from "../hooks/useAdmin";
 
 
-const Sidebar = () => {
-  const [open, setOpen] = useState(true);
+interface SidebarProps {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isMobile: boolean;
+  closeSidebar: () => void;
+}
+
+const Sidebar = ({ open, setOpen, isMobile, closeSidebar }: SidebarProps) => {
   const { isAdmin, user, isLoading } = useAdmin();
   const pathname = usePathname();
 
@@ -30,9 +37,12 @@ const Sidebar = () => {
 
   return (
     <aside
-      className={`relative bg-white dark:bg-[#030712] border-r border-slate-200 dark:border-slate-800 h-screen transition-all duration-500 ease-in-out flex flex-col z-40 ${
-        open ? "w-72" : "w-24"
-      }`}
+      className={`fixed lg:sticky top-0 bg-white dark:bg-[#030712] border-r border-slate-200 dark:border-slate-800 h-screen transition-all duration-500 ease-in-out flex flex-col z-50 lg:z-40 ${open
+          ? "w-72 translate-x-0"
+          : isMobile
+            ? "w-0 -translate-x-full border-none overflow-hidden"
+            : "w-24 translate-x-0"
+        }`}
     >
       {/* Collapse Toggle */}
       <button
@@ -69,12 +79,13 @@ const Sidebar = () => {
           {open ? "Main Menu" : "•••"}
         </p>
 
-        <SidebarItem 
-          href="/dashboard" 
-          icon={<LayoutDashboard size={20} />} 
-          label="Dashboard" 
-          open={open} 
-          active={isActive("/dashboard")} 
+        <SidebarItem
+          href="/dashboard"
+          icon={<LayoutDashboard size={20} />}
+          label="Dashboard"
+          open={open}
+          active={isActive("/dashboard")}
+          onClick={closeSidebar}
         />
 
         {/* Admin Specific Routes */}
@@ -84,54 +95,77 @@ const Sidebar = () => {
             <p className={`text-[10px] font-bold text-indigo-500 uppercase tracking-widest mb-4 ml-2 ${!open && "text-center ml-0"}`}>
               {open ? "Management" : "Adm"}
             </p>
-            <SidebarItem 
-              href="/dashboard/admin" 
-              icon={<ShieldCheck size={20} />} 
-              label="Admin Panel" 
-              open={open} 
-              active={isActive("/dashboard/admin")} 
+            <SidebarItem
+              href="/dashboard/admin"
+              icon={<ShieldCheck size={20} />}
+              label="Admin Panel"
+              open={open}
+              active={isActive("/dashboard/admin")}
+              onClick={closeSidebar}
             />
-            <SidebarItem 
-              href="/dashboard/projects" 
-              icon={<FolderKanban size={20} />} 
-              label="Projects" 
-              open={open} 
-              active={isActive("/dashboard/projects")} 
+            <SidebarItem
+              href="/dashboard/projects"
+              icon={<FolderKanban size={20} />}
+              label="Projects"
+              open={open}
+              active={isActive("/dashboard/projects")}
+              onClick={closeSidebar}
             />
           </>
         )}
 
         {/* Client Routes */}
         {role === "client" && (
-          <SidebarItem 
-            href="/dashboard/client" 
-            icon={<UserCircle size={20} />} 
-            label="Client Portal" 
-            open={open} 
-            active={isActive("/dashboard/client")} 
+          <SidebarItem
+            href="/dashboard/client"
+            icon={<UserCircle size={20} />}
+            label="Client Portal"
+            open={open}
+            active={isActive("/dashboard/client")}
+            onClick={closeSidebar}
           />
         )}
 
         {/* Collaborator Routes */}
         {role === "collaborator" && (
-          <SidebarItem 
-            href="/dashboard/collaborator" 
-            icon={<Briefcase size={20} />} 
-            label="Team Space" 
-            open={open} 
-            active={isActive("/dashboard/collaborator")} 
+          <SidebarItem
+            href="/dashboard/collaborator"
+            icon={<Briefcase size={20} />}
+            label="Team Space"
+            open={open}
+            active={isActive("/dashboard/collaborator")}
+            onClick={closeSidebar}
           />
         )}
+        {/* profile */}
+        <SidebarItem
+          href="/dashboard/profile"
+          icon={<Users size={20} />}
+          label="Profile"
+          open={open}
+          active={isActive("/dashboard/profile")}
+          onClick={closeSidebar}
+        />
+
+        <SidebarItem
+          href="/dashboard/ai-charts"
+          icon={<Brain size={20} />}
+          label="AI Charts"
+          open={open}
+          active={isActive("/dashboard/ai-charts")}
+          onClick={closeSidebar}
+        />
       </nav>
 
       {/* Bottom Section */}
       <div className="p-4 border-t border-slate-100 dark:border-slate-800">
-        <SidebarItem 
-          href="/dashboard/settings" 
-          icon={<Settings size={20} />} 
-          label="Settings" 
-          open={open} 
-          active={isActive("/dashboard/settings")} 
+        <SidebarItem
+          href="/dashboard/settings"
+          icon={<Settings size={20} />}
+          label="Settings"
+          open={open}
+          active={isActive("/dashboard/settings")}
+          onClick={closeSidebar}
         />
       </div>
     </aside>
@@ -145,22 +179,23 @@ interface SidebarItemProps {
   label: string;
   open: boolean;
   active: boolean;
+  onClick?: () => void;
 }
 
-const SidebarItem = ({ href, icon, label, open, active }: SidebarItemProps) => {
+const SidebarItem = ({ href, icon, label, open, active, onClick }: SidebarItemProps) => {
   return (
     <Link
       href={href}
-      className={`group relative flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 ${
-        active 
-          ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 shadow-sm" 
+      onClick={onClick}
+      className={`group relative flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 ${active
+          ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 shadow-sm"
           : "text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white"
-      }`}
+        }`}
     >
       <div className={`transition-transform duration-300 ${active ? "scale-110" : "group-hover:scale-110"}`}>
         {icon}
       </div>
-      
+
       <AnimatePresence>
         {open && (
           <motion.span
@@ -176,9 +211,9 @@ const SidebarItem = ({ href, icon, label, open, active }: SidebarItemProps) => {
 
       {/* Active Indicator Pin */}
       {active && (
-        <motion.div 
+        <motion.div
           layoutId="active-pill"
-          className="absolute left-0 w-1 h-6 bg-indigo-600 rounded-r-full" 
+          className="absolute left-0 w-1 h-6 bg-indigo-600 rounded-r-full"
         />
       )}
     </Link>

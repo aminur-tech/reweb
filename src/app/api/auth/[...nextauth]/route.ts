@@ -5,56 +5,41 @@ import axios, { AxiosError } from "axios";
 
 const handler = NextAuth({
   providers: [
-    // 🔵 Google Provider
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
-
-    // 🔐 Credentials Provider (Express API)
     CredentialsProvider({
       name: "Credentials",
-      credentials: {
-        email: {},
-        password: {},
+      credentials: { email: {}, password: {} },
+      async authorize(credentials) {
+        try {
+          const { data } = await axios.post(
+            "https://re-web-server.vercel.app/api/v1/auth/login",
+            {
+              email: credentials?.email,
+              password: credentials?.password,
+            },
+          );
+          return {
+            id: data.data._id,
+            email: data.data.email,
+            name: data.data.name,
+            image: data.data.profileImg,
+            role: data.data.role,
+            accessToken: data.token,
+          };
+        } catch (error) {
+          const axiosError = error as AxiosError<{ message: string }>;
+          throw new Error(
+            axiosError.response?.data?.message || "Invalid credentials",
+          );
+        }
       },
-
-      // ... inside CredentialsProvider
-async authorize(credentials) {
-  try {
-    const { data } = await axios.post(
-      "https://re-web-server.vercel.app/api/v1/auth/login",
-      {
-        email: credentials?.email,
-        password: credentials?.password,
-      }
-    );
-
-    // If the backend sent a successful response
-    return {
-      id: data.data._id,
-      email: data.data.email,
-      role: data.data.role,
-      accessToken: data.token,
-    };
-  } catch (error) {
-    const axiosError = error as AxiosError<{ message: string }>;
-    // 🔥 FIX: Extract the message from your Express backend
-    const errorMessage = axiosError.response?.data?.message || "Invalid credentials";
-    
-    // 🔥 FIX: Throwing the error allows res.error to contain this specific string
-    throw new Error(errorMessage);
-  }
-}
     }),
   ],
-
-  session: {
-    strategy: "jwt",
-  },
-
+  session: { strategy: "jwt" },
   callbacks: {
-    // 🔥 Google Login → Save to MongoDB
     async signIn({ user, account }) {
       if (account?.provider === "google") {
         try {
@@ -64,14 +49,8 @@ async authorize(credentials) {
               email: user.email,
               name: user.name,
               image: user.image,
-            }
+            },
           );
-
-          if (!data.success) {
-            throw new Error("Google login failed");
-          }
-
-          // ✅ Attach backend token
           user.accessToken = data.token;
           user.role = data.data.role;
         } catch (error) {
@@ -79,30 +58,37 @@ async authorize(credentials) {
           return false;
         }
       }
-
       return true;
     },
 
-    // 🔐 Store token in JWT
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.accessToken = user.accessToken;
         token.role = user.role;
+        token.name = user.name;
+        token.picture = user.image;
+      }
+
+      if (trigger === "update" && session) {
+        if (session.user?.name) token.name = session.user.name;
+        if (session.user?.image) {
+          token.picture = session.user.image; 
+        }
       }
       return token;
     },
 
-    // 📦 Send to frontend
     async session({ session, token }) {
-      session.accessToken = token.accessToken as string;
-      session.user.role = token.role as string;
+      if (session.user) {
+        session.accessToken = token.accessToken as string;
+        session.user.role = token.role as string;
+        session.user.name = token.name as string;
+        session.user.image = token.picture as string;
+      }
       return session;
     },
   },
-
-  pages: {
-    signIn: "/login",
-  },
+  pages: { signIn: "/login" },
 });
 
 export { handler as GET, handler as POST };

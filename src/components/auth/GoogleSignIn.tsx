@@ -8,7 +8,7 @@ const GoogleSignIn = ({ text }: { text: string }) => {
   const searchParams = useSearchParams();
 
   // 👉 Get callbackUrl from query OR fallback
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   return (
     <button
