@@ -90,7 +90,7 @@ const ProjectsDashboard = () => {
       await api.delete(`/${id}`);
       toast.success("Project deleted");
       setProjects(prev => prev.filter(p => p._id !== id));
-    } catch (error) {
+    } catch (error: unknown) {
       toast.error("Delete failed");
     }
   };

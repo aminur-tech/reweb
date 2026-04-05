@@ -47,15 +47,22 @@ const handler = NextAuth({
             "https://re-web-server.vercel.app/api/v1/auth/google",
             {
               email: user.email,
-              name: user.name,
+              name: user.name ||  user.email?.split("@")[0],
               image: user.image,
             },
           );
           user.accessToken = data.token;
           user.role = data.data.role;
-        } catch (error) {
-          console.error("Google SignIn Error:", error);
-          return false;
+          user.image = data.data.profileImg;
+          user.name = data.data.name;
+          return true;
+        } catch (error: unknown) {
+          const errorMessage = axios.isAxiosError(error) 
+            ? error.response?.data?.message 
+            : (error as Error).message;
+
+          console.error("Google SignIn Error:", errorMessage);
+          throw new Error(errorMessage || "Google login failed");
         }
       }
       return true;
@@ -72,7 +79,7 @@ const handler = NextAuth({
       if (trigger === "update" && session) {
         if (session.user?.name) token.name = session.user.name;
         if (session.user?.image) {
-          token.picture = session.user.image; 
+          token.picture = session.user.image;
         }
       }
       return token;
