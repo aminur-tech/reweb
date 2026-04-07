@@ -5,13 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Menu, X, ChevronRight, Sparkles, Sun, Moon, 
-  User, LayoutDashboard, PieChart, Settings, LogOut, BarChart3, 
+  Menu, X, ChevronRight, Sun, Moon, 
+   LayoutDashboard, Settings, LogOut, 
   User2,
   Brain
 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
+import Logo from "../logo/Logo";
 
 // --- Custom NavLink Component ---
 const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
@@ -84,14 +85,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-tr from-indigo-600 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30">
-              <Sparkles className="text-white w-6 h-6" />
-            </div>
-            <span className="text-2xl font-black tracking-tight dark:text-white text-slate-900">
-              REWEV<span className="text-pink-500">.</span>
-            </span>
-          </Link>
+         <Logo/>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1">
@@ -180,7 +174,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Content ... (similar logic using NavLink) */}
+      
       {/* Mobile Menu Content */}
       <AnimatePresence>
         {isOpen && (
