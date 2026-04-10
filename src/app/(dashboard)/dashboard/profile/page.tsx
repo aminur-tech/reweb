@@ -40,7 +40,7 @@ const ProfilePage = () => {
       }
 
       const res = await axios.patch(
-        "https://re-web-server.vercel.app/api/v1/auth/update-profile",
+        "http://localhost:5000/api/v1/auth/update-profile",
         formData,
         {
           headers: {

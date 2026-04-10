@@ -28,7 +28,7 @@ const LoginForm = () => {
         // Scenario A: User is submitting the Verification Code
         if (isNeedsVerification) {
             try {
-                const res = await axios.post("https://re-web-server.vercel.app/api/v1/auth/verify-email", {
+                const res = await axios.post("http://localhost:5000/api/v1/auth/verify-email", {
                     email,
                     code: verificationCode
                 });

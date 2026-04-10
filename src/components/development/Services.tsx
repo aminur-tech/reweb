@@ -6,7 +6,7 @@ import { Plus, Pencil, Trash2, Loader2, X, LayoutGrid, Tag } from "lucide-react"
 import { useAdmin } from "../hooks/useAdmin";
 import { toast } from "sonner";
 
-const API_URL = "https://re-web-server.vercel.app/api/v1/services";
+const API_URL = "http://localhost:5000/api/v1/services";
 
 interface Service {
   _id: string;

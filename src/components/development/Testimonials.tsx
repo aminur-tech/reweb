@@ -25,7 +25,7 @@ const Testimonials = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const { data } = await axios.get("https://re-web-server.vercel.app/api/v1/projects");
+        const { data } = await axios.get("http://localhost:5000/api/v1/projects");
         if (data.success) {
           const devReviews = data.data
             .filter((p: Project) => p.category === "Web Development")

@@ -38,10 +38,10 @@ const Sidebar = ({ open, setOpen, isMobile, closeSidebar }: SidebarProps) => {
   return (
     <aside
       className={`fixed lg:sticky top-0 bg-white dark:bg-[#030712] border-r border-slate-200 dark:border-slate-800 h-screen transition-all duration-500 ease-in-out flex flex-col z-50 lg:z-40 ${open
-          ? "w-72 translate-x-0"
-          : isMobile
-            ? "w-0 -translate-x-full border-none overflow-hidden"
-            : "w-24 translate-x-0"
+        ? "w-72 translate-x-0"
+        : isMobile
+          ? "w-0 -translate-x-full border-none overflow-hidden"
+          : "w-24 translate-x-0"
         }`}
     >
       {/* Collapse Toggle */}
@@ -88,54 +88,91 @@ const Sidebar = ({ open, setOpen, isMobile, closeSidebar }: SidebarProps) => {
           onClick={closeSidebar}
         />
 
-        {/* Admin Specific Routes */}
+        {/* Admin Section */}
         {!isLoading && isAdmin && (
           <>
             <div className="my-4 border-t border-slate-100 dark:border-slate-800" />
+
             <p className={`text-[10px] font-bold text-indigo-500 uppercase tracking-widest mb-4 ml-2 ${!open && "text-center ml-0"}`}>
-              {open ? "Management" : "Adm"}
+              {open ? "Admin Panel" : "Adm"}
             </p>
+
             <SidebarItem
-              href="/dashboard/admin"
+              href="/dashboard/admin/tasks"
               icon={<ShieldCheck size={20} />}
-              label="Admin Panel"
+              label="Manage Tasks"
               open={open}
-              active={isActive("/dashboard/admin")}
+              active={pathname.startsWith("/dashboard/admin/tasks")}
               onClick={closeSidebar}
             />
+
             <SidebarItem
-              href="/dashboard/projects"
+              href="/dashboard/admin/assign"
+              icon={<Users size={20} />}
+              label="Assign Task"
+              open={open}
+              active={pathname.startsWith("/dashboard/admin/assign")}
+              onClick={closeSidebar}
+            />
+
+            <SidebarItem
+              href="/dashboard/admin/projects"
               icon={<FolderKanban size={20} />}
               label="Projects"
               open={open}
-              active={isActive("/dashboard/projects")}
+              active={pathname.startsWith("/dashboard/admin/projects")}
               onClick={closeSidebar}
             />
           </>
         )}
 
-        {/* Client Routes */}
+        {/* Client Section */}
         {role === "client" && (
-          <SidebarItem
-            href="/dashboard/client"
-            icon={<UserCircle size={20} />}
-            label="Client Portal"
-            open={open}
-            active={isActive("/dashboard/client")}
-            onClick={closeSidebar}
-          />
+          <>
+            <div className="my-4 border-t border-slate-100 dark:border-slate-800" />
+
+            <p className={`text-[10px] font-bold text-green-500 uppercase tracking-widest mb-4 ml-2 ${!open && "text-center ml-0"}`}>
+              {open ? "Client Panel" : "Cli"}
+            </p>
+
+            <SidebarItem
+              href="/dashboard/client/provide-task"
+              icon={<UserCircle size={20} />}
+              label="Provide Task"
+              open={open}
+              active={pathname.startsWith("/dashboard/client/provide-task")}
+              onClick={closeSidebar}
+            />
+
+            <SidebarItem
+              href="/dashboard/client/my-tasks"
+              icon={<Briefcase size={20} />}
+              label="My Tasks"
+              open={open}
+              active={pathname.startsWith("/dashboard/client/my-tasks")}
+              onClick={closeSidebar}
+            />
+          </>
         )}
 
-        {/* Collaborator Routes */}
+        {/* Collaborator Section */}
         {role === "collaborator" && (
-          <SidebarItem
-            href="/dashboard/collaborator"
-            icon={<Briefcase size={20} />}
-            label="Team Space"
-            open={open}
-            active={isActive("/dashboard/collaborator")}
-            onClick={closeSidebar}
-          />
+          <>
+            <div className="my-4 border-t border-slate-100 dark:border-slate-800" />
+
+            <p className={`text-[10px] font-bold text-purple-500 uppercase tracking-widest mb-4 ml-2 ${!open && "text-center ml-0"}`}>
+              {open ? "Workspace" : "Col"}
+            </p>
+
+            <SidebarItem
+              href="/dashboard/collaborator/tasks"
+              icon={<Briefcase size={20} />}
+              label="Assigned Tasks"
+              open={open}
+              active={pathname.startsWith("/dashboard/collaborator/tasks")}
+              onClick={closeSidebar}
+            />
+          </>
         )}
         {/* profile */}
         <SidebarItem
@@ -188,8 +225,8 @@ const SidebarItem = ({ href, icon, label, open, active, onClick }: SidebarItemPr
       href={href}
       onClick={onClick}
       className={`group relative flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 ${active
-          ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 shadow-sm"
-          : "text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white"
+        ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 shadow-sm"
+        : "text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white"
         }`}
     >
       <div className={`transition-transform duration-300 ${active ? "scale-110" : "group-hover:scale-110"}`}>

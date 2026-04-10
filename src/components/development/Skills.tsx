@@ -10,7 +10,7 @@ import {
 import { useAdmin } from "../hooks/useAdmin";
 import { toast } from "sonner";
 
-const API_URL = "https://re-web-server.vercel.app/api/v1/techstack";
+const API_URL = "http://localhost:5000/api/v1/techstack";
 
 const TECH_SUGGESTIONS = [
   { title: "React.js", icon: "Layout", desc: "UI Library" },

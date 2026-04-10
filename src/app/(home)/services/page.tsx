@@ -66,7 +66,7 @@ const Solutions = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post("https://re-web-server.vercel.app/api/v1/contact/send-email", formData);
+      await axios.post("http://localhost:5000/api/v1/contact/send-email", formData);
       toast.success("Message sent successfully.");
       setIsModalOpen(false);
     } catch {

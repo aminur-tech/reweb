@@ -26,7 +26,7 @@ const AiConsultant = () => {
 
     try {
       // Ensure the URL matches your Backend Route
-      const res = await axios.post("https://re-web-server.vercel.app/api/v1/ai/consult", {
+      const res = await axios.post("http://localhost:5000/api/v1/ai/consult", {
         message: userMessage.content,
         history: messages 
       });
