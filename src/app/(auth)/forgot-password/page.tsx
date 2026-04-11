@@ -4,6 +4,7 @@ import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { Loader2, Mail, Lock, ShieldCheck, ArrowLeft, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import Swal from 'sweetalert2';
+import { api } from '@/lib/api';
 
 const ForgotPassword = () => {
     const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: New Password
@@ -24,7 +25,7 @@ const ForgotPassword = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            await axios.post("http://localhost:5000/api/v1/auth/forgot-password", { email });
+            await api.post("/api/v1/auth/forgot-password", { email });
             setStep(2);
             Swal.fire("Sent!", "Check your email for the reset code.", "success");
         } catch (err) {
@@ -51,7 +52,7 @@ const ForgotPassword = () => {
 
         setLoading(true);
         try {
-            await axios.post("http://localhost:5000/api/v1/auth/reset-password", { 
+            await api.post("/api/v1/auth/reset-password", { 
                 email, 
                 code, 
                 newPassword 

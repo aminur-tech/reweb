@@ -1,9 +1,8 @@
 "use client";
-
 import React, { useRef, useState } from "react";
 import { useSession } from "next-auth/react";
-import axios from "axios";
 import { Camera, Loader2, User, Mail, CheckCircle2 } from "lucide-react";
+import { api } from "@/lib/api";
 
 const ProfilePage = () => {
   const { data: session, update } = useSession();
@@ -39,8 +38,8 @@ const ProfilePage = () => {
         formData.append("image", file);
       }
 
-      const res = await axios.patch(
-        "http://localhost:5000/api/v1/auth/update-profile",
+      const res = await api.patch(
+        "/api/v1/auth/update-profile",
         formData,
         {
           headers: {

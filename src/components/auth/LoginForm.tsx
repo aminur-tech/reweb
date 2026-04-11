@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { Eye, EyeOff, AlertCircle, Loader2, ShieldCheck, ArrowLeft } from 'lucide-react';
 import axios, { AxiosError } from 'axios';
+import { api } from '@/lib/api';
 
 const LoginForm = () => {
     const router = useRouter();
@@ -28,7 +29,7 @@ const LoginForm = () => {
         // Scenario A: User is submitting the Verification Code
         if (isNeedsVerification) {
             try {
-                const res = await axios.post("http://localhost:5000/api/v1/auth/verify-email", {
+                const res = await api.post("/api/v1/auth/verify-email", {
                     email,
                     code: verificationCode
                 });

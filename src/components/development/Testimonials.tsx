@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion, Variants } from "framer-motion";
 import { Quote, Star, Terminal, Activity } from "lucide-react";
+import { api } from "@/lib/api";
 
 interface Review {
   userName: string;
@@ -25,7 +26,7 @@ const Testimonials = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/api/v1/projects");
+        const { data } = await api.get("/api/v1/projects");
         if (data.success) {
           const devReviews = data.data
             .filter((p: Project) => p.category === "Web Development")

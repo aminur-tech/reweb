@@ -26,7 +26,7 @@ const ProjectsDashboard = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const API_URL = "http://localhost:5000/api/v1/projects";
+  const API_URL = "https://re-web-server.vercel.app/api/v1/projects";
   const api = axios.create({
     baseURL: API_URL,
     headers: { Authorization: `Bearer ${token}` }

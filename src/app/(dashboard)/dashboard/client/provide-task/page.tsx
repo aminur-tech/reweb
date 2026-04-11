@@ -9,7 +9,8 @@ import {
     Info,
     Code2,
     Search,
-    CheckCircle2
+    CheckCircle2,
+    Star
 } from "lucide-react";
 import { toast } from "sonner";
 // Import your custom axios instance
@@ -23,8 +24,10 @@ const ProvideTask = () => {
     const [loading, setLoading] = useState(false);
     const [taskData, setTaskData] = useState({
         title: "",
-        description: "",
-        category: "web-development"
+        requirementInfo: "",
+        category: "web-development",
+        companyName: "",
+        companyAddress: ""
     });
 
     const onDrop = useCallback((e: React.DragEvent) => {
@@ -43,7 +46,7 @@ const ProvideTask = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!taskData.title.trim() || !taskData.description.trim()) {
+        if (!taskData.title.trim() || !taskData.requirementInfo.trim()) {
             return toast.error("Please fill in all required fields.");
         }
 
@@ -54,7 +57,7 @@ const ProvideTask = () => {
 
             // existing fields
             formData.append("title", taskData.title);
-            formData.append("description", taskData.description);
+            formData.append("requirementInfo", taskData.requirementInfo);
             formData.append("category", taskData.category);
 
             // ✅ NEW: auto from session
@@ -63,8 +66,8 @@ const ProvideTask = () => {
             formData.append("clientImage", session?.user?.image || "");
 
             // optional (if you want company & address later from DB or default)
-            formData.append("companyName", "N/A");
-            formData.append("address", "N/A");
+            formData.append("companyName", taskData.companyName || "N/A");
+            formData.append("address", taskData.companyAddress || "N/A");
 
             // ✅ added by (better to use id/email)
             formData.append("addedBy", session?.user?.email || "");
@@ -93,8 +96,10 @@ const ProvideTask = () => {
                 setFiles([]);
                 setTaskData({
                     title: "",
-                    description: "",
+                    requirementInfo: "",
                     category: "web-development",
+                    companyName: "",
+                    companyAddress: ""
                 });
             }
         } catch (error: unknown) {
@@ -173,7 +178,7 @@ const ProvideTask = () => {
                             {/* Title */}
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wider">
-                                    Project Title
+                                    Project Title <Star size={12} className="text-yellow-500 inline-block mb-1" />
                                 </label>
                                 <input
                                     type="text"
@@ -185,7 +190,7 @@ const ProvideTask = () => {
                                 />
                             </div>
 
-                            {/* Description */}
+                            {/* Requirements */}
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wider">
                                     Detailed Requirements or provide a link to a document (Google Docs, Notion, etc.)
@@ -194,11 +199,42 @@ const ProvideTask = () => {
                                     rows={5}
                                     placeholder="Provide context, goals, and technical requirements..."
                                     className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white resize-none"
-                                    value={taskData.description}
-                                    onChange={(e) => setTaskData({ ...taskData, description: e.target.value })}
+                                    value={taskData.requirementInfo}
+                                    onChange={(e) => setTaskData({ ...taskData, requirementInfo: e.target.value })}
                                     required
                                 />
                             </div>
+
+                            {/* company name and Address */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wider">
+                                        Company Name <Star size={12} className="text-yellow-500 inline-block mb-1" />
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter company name"
+                                        required
+                                        className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white font-medium"
+                                        value={taskData.companyName}
+                                        onChange={(e) => setTaskData({ ...taskData, companyName: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wider">
+                                        Company Address <Star size={12} className="text-yellow-500 inline-block mb-1" />
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter company address"
+                                        className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white font-medium"
+                                        value={taskData.companyAddress}
+                                        onChange={(e) => setTaskData({ ...taskData, companyAddress: e.target.value })}
+                                    />
+                                </div>
+                                
+                            </div>
+
 
                             {/* Upload Zone */}
                             <div>

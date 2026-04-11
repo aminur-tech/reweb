@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { api } from "@/lib/api";
 
 interface Project {
   _id: string;
@@ -73,12 +74,11 @@ const ServiceHighlights = () => {
   const [activeCategory, setActiveCategory] = useState("Web Development");
   const [loading, setLoading] = useState(true);
 
-  const API_URL = "http://localhost:5000/api/v1/projects";
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const { data } = await axios.get(API_URL);
+        const { data } = await api.get("/api/v1/projects");
         if (data.success) {
           setProjects(data.data);
           filterAndSort(data.data, "Web Development");

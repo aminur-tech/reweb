@@ -1,12 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import axios from "axios";
 import { Plus, Pencil, Trash2, Loader2, X, LayoutGrid, Tag } from "lucide-react";
 import { useAdmin } from "../hooks/useAdmin";
 import { toast } from "sonner";
+import { api } from "@/lib/api";
 
-const API_URL = "http://localhost:5000/api/v1/services";
 
 interface Service {
   _id: string;
@@ -31,7 +30,7 @@ const Services = () => {
 
   const fetchServices = async () => {
     try {
-      const { data } = await axios.get(API_URL);
+      const { data } = await api.get("/api/v1/services");
       setServices(data.data);
     } catch (err) {
       console.error("Fetch error:", err);
@@ -47,12 +46,12 @@ const Services = () => {
     setIsSubmitting(true);
     try {
       if (editingId) {
-        const { data } = await axios.patch(`${API_URL}/${editingId}`, formData, {
+        const { data } = await api.patch(`/api/v1/services/${editingId}`, formData, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setServices(services.map(s => s._id === editingId ? data.data : s));
       } else {
-        const { data } = await axios.post(API_URL, formData, {
+        const { data } = await api.post(`/api/v1/services`, formData, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setServices([...services, data.data]);
@@ -68,7 +67,7 @@ const Services = () => {
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this service?")) return;
     try {
-      await axios.delete(`${API_URL}/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      await api.delete(`/api/v1/services/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       setServices(services.filter((s) => s._id !== id));
     } catch (err) { toast.error("Delete failed"); }
   };

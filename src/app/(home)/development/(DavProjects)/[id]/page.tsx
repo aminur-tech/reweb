@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSession, signIn } from "next-auth/react";
@@ -11,6 +10,7 @@ import {
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
+import { api } from "@/lib/api";
 
 interface Review {
   userName: string;
@@ -46,7 +46,7 @@ export default function ProjectDetails() {
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/v1/projects/${id}`);
+        const res = await api.get(`/api/v1/projects/${id}`);
         if (res.data.success) setProject(res.data.data);
       } catch (err) {
         toast.error("Failed to load project assets.");
@@ -63,8 +63,8 @@ export default function ProjectDetails() {
 
     setIsSubmitting(true);
     try {
-      const res = await axios.post(
-        `http://localhost:5000/api/v1/projects/${id}/review`,
+      const res = await api.post(
+        `/api/v1/projects/${id}/review`,
         { rating, comment, userName: session.user?.name,image: session.user?.image},
         { headers: { Authorization: `Bearer ${session.accessToken}` } }
       );

@@ -5,6 +5,7 @@ import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, ShieldCheck, Info, CheckCircle2, XCircle } from 'lucide-react';
 import Swal from 'sweetalert2';
+import { api } from '@/lib/api';
 
 const SignUpForm = () => {
     const router = useRouter();
@@ -77,7 +78,7 @@ const SignUpForm = () => {
                 profileImg: formData.profileImg
             };
 
-            const { data } = await axios.post("http://localhost:5000/api/v1/auth/register", payload);
+            const { data } = await api.post("/api/v1/auth/register", payload);
 
             if (data.success) {
                 Swal.fire({
@@ -101,7 +102,7 @@ const SignUpForm = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const { data } = await axios.post("http://localhost:5000/api/v1/auth/verify-email", { 
+            const { data } = await api.post("/api/v1/auth/verify-email", { 
                 email: formData.email, 
                 code: verificationCode 
             });

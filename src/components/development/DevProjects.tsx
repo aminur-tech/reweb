@@ -1,7 +1,5 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Loader2,
   ArrowRight,
@@ -11,6 +9,7 @@ import {
   Layers
 } from "lucide-react";
 import Link from "next/link";
+import { api } from "@/lib/api";
 
 interface Project {
   _id: string;
@@ -64,12 +63,11 @@ const DevProjects = () => {
   const [loading, setLoading] = useState(true);
 
   const PAGE_CATEGORY = "Web Development";
-  const API_URL = "http://localhost:5000/api/v1/projects";
 
   useEffect(() => {
     const fetchDevProjects = async () => {
       try {
-        const { data } = await axios.get(API_URL);
+        const { data } = await api.get("/api/v1/projects");
         if (data.success) {
           const filtered = data.data.filter((p: Project) => p.category === PAGE_CATEGORY);
           setProjects(filtered);

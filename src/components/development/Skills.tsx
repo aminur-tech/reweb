@@ -9,8 +9,8 @@ import {
 } from "lucide-react";
 import { useAdmin } from "../hooks/useAdmin";
 import { toast } from "sonner";
+import { api } from "@/lib/api";
 
-const API_URL = "http://localhost:5000/api/v1/techstack";
 
 const TECH_SUGGESTIONS = [
   { title: "React.js", icon: "Layout", desc: "UI Library" },
@@ -56,7 +56,7 @@ const Skills = () => {
 
   const fetchTechs = async () => {
     try {
-      const { data } = await axios.get(API_URL);
+      const { data } = await api.get("/api/v1/techstack");
       // Sort by createdAt ASC so new items are at the end
       const sorted = data.data.sort((a: Tech, b: Tech) => 
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -77,11 +77,11 @@ const Skills = () => {
     e.preventDefault();
     try {
       if (editingId) {
-        await axios.patch(`${API_URL}/${editingId}`, formData, {
+        await api.patch(`/api/v1/techstack/${editingId}`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await axios.post(API_URL, formData, {
+        await api.post(`/api/v1/techstack`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
@@ -92,7 +92,7 @@ const Skills = () => {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this tech?")) return;
-    await axios.delete(`${API_URL}/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+    await api.delete(`/api/v1/techstack/${id}`, { headers: { Authorization: `Bearer ${token}` } });
     setTechs(techs.filter(t => t._id !== id));
   };
 

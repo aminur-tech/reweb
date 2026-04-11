@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Send, Bot, User, Loader2 } from "lucide-react";
 import axios from "axios";
+import { api } from "@/lib/api";
 
 const AiConsultant = () => {
   const [messages, setMessages] = useState([
@@ -26,7 +27,7 @@ const AiConsultant = () => {
 
     try {
       // Ensure the URL matches your Backend Route
-      const res = await axios.post("http://localhost:5000/api/v1/ai/consult", {
+      const res = await api.post("/api/v1/ai/consult", {
         message: userMessage.content,
         history: messages 
       });

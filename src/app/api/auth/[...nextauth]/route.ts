@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios, { AxiosError } from "axios";
+import { api } from "@/lib/api";
 
 const handler = NextAuth({
   providers: [
@@ -14,8 +15,8 @@ const handler = NextAuth({
       credentials: { email: {}, password: {} },
       async authorize(credentials) {
         try {
-          const { data } = await axios.post(
-            "http://localhost:5000/api/v1/auth/login",
+          const { data } = await api.post(
+            "/api/v1/auth/login",
             {
               email: credentials?.email,
               password: credentials?.password,
@@ -43,8 +44,8 @@ const handler = NextAuth({
     async signIn({ user, account }) {
       if (account?.provider === "google") {
         try {
-          const { data } = await axios.post(
-            "http://localhost:5000/api/v1/auth/google",
+          const { data } = await api.post(
+            "/api/v1/auth/google",
             {
               email: user.email,
               name: user.name ||  user.email?.split("@")[0],
