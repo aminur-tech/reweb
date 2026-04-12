@@ -80,7 +80,7 @@ const Navbar = () => {
     },
     { name: "Ecosystem", href: "/ecosystem" },
     { name: "Achievements", href: "/achievements" },
-    { name: session?.user ? "Dashboard" : "Login", href: session?.user ? "/dashboard" : "/login" }
+    { name: session?.user && "Dashboard", href: "/dashboard" }
   ];
 
   return (

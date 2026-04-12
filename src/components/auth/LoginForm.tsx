@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import GoogleSignIn from './GoogleSignIn';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import { Eye, EyeOff, AlertCircle, Loader2, ShieldCheck, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, Loader2, ShieldCheck, ArrowLeft, User, Shield, Settings } from 'lucide-react';
 import axios, { AxiosError } from 'axios';
 import { api } from '@/lib/api';
 
@@ -21,12 +21,18 @@ const LoginForm = () => {
     const [loading, setLoading] = useState(false);
     const [isNeedsVerification, setIsNeedsVerification] = useState(false);
 
+    // Demo Autofill Handler
+    const handleDemoLogin = (demoEmail: string, demoPass: string) => {
+        setEmail(demoEmail);
+        setPassword(demoPass);
+        setError(""); // Clear errors when selecting a demo
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError("");
         setLoading(true);
 
-        // Scenario A: User is submitting the Verification Code
         if (isNeedsVerification) {
             try {
                 const res = await api.post("/api/v1/auth/verify-email", {
@@ -35,7 +41,6 @@ const LoginForm = () => {
                 });
 
                 if (res.data.success) {
-                    // Once verified, automatically try to log them in with original password
                     const loginRes = await signIn("credentials", {
                         email,
                         password,
@@ -56,7 +61,6 @@ const LoginForm = () => {
             return;
         }
 
-        // Scenario B: Normal Login Attempt
         const res = await signIn("credentials", {
             email,
             password,
@@ -66,7 +70,7 @@ const LoginForm = () => {
         if (res?.error) {
             if (res.error.toLowerCase().includes("verify")) {
                 setError("Verify your email to continue. We've sent a code!");
-                setIsNeedsVerification(true); // Switch UI to verification mode
+                setIsNeedsVerification(true);
             } else {
                 setError("Invalid email or password.");
             }
@@ -88,6 +92,36 @@ const LoginForm = () => {
                 </p>
             </div>
 
+            {/* Demo Credentials Buttons */}
+            {!isNeedsVerification && (
+                <div className="grid grid-cols-3 gap-2 mb-6">
+                    <button
+                        type="button"
+                        onClick={() => handleDemoLogin("aminurrahman9793@gmail.com", "a@84A25m62")}
+                        className="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-indigo-100/50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-200/50 transition-all group"
+                    >
+                        <Shield size={16} className="text-indigo-600 mb-1 group-hover:scale-110 transition-transform" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">Admin</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handleDemoLogin("aminur.programme@gmail.com", "a@84A25m62")}
+                        className="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-purple-100/50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800 hover:bg-purple-200/50 transition-all group"
+                    >
+                        <Settings size={16} className="text-purple-600 mb-1 group-hover:scale-110 transition-transform" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">Collaborator</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handleDemoLogin("aminurrahman4078@gmail.com", "a@84A25m62")}
+                        className="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-pink-100/50 dark:bg-pink-900/30 border border-pink-200 dark:border-pink-800 hover:bg-pink-200/50 transition-all group"
+                    >
+                        <User size={16} className="text-pink-600 mb-1 group-hover:scale-110 transition-transform" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">Client</span>
+                    </button>
+                </div>
+            )}
+
             {error && (
                 <div className="mb-6 p-4 rounded-xl flex items-center gap-3 text-sm border-l-4 bg-red-100 border-red-500 text-red-800 animate-in fade-in slide-in-from-top-1">
                     <AlertCircle size={18} className="shrink-0" />
@@ -96,7 +130,6 @@ const LoginForm = () => {
             )}
 
             <form className="space-y-5" onSubmit={handleSubmit}>
-                {/* Email remains visible but disabled during verification */}
                 <div>
                     <label className="block text-sm font-semibold mb-2 ml-1">Email Address</label>
                     <input
@@ -111,7 +144,6 @@ const LoginForm = () => {
                 </div>
 
                 {!isNeedsVerification ? (
-                    // PASSWORD INPUT (Login Mode)
                     <div className="relative animate-in fade-in slide-in-from-right-4">
                         <label className="block text-sm font-semibold mb-2 ml-1">Password</label>
                         <div className="relative">
@@ -133,7 +165,6 @@ const LoginForm = () => {
                         </div>
                     </div>
                 ) : (
-                    // CODE INPUT (Verification Mode)
                     <div className="animate-in fade-in slide-in-from-left-4">
                         <label className="block text-sm font-semibold mb-2 ml-1 text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
                             <ShieldCheck size={16} /> Verification Code
