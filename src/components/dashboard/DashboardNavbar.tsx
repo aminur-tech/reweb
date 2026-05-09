@@ -5,7 +5,7 @@ import { ChevronDown, LogOut, Menu, Moon, Settings, Sparkles, Sun, User, Bell, C
 import { signOut, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
-import { useSocket } from "../hooks/useSocket";
+import useSocket from "../hooks/usePusher";
 import { api } from "@/lib/api";
 import { formatDistanceToNow } from "date-fns"; 
 
@@ -20,7 +20,7 @@ interface INotification {
 const DashboardNavbar = ({ onMenuClick }: { onMenuClick: () => void }) => {
   const { data: session } = useSession();
   const { resolvedTheme, setTheme } = useTheme();
-  const socket = useSocket();
+  const channel = useSocket();
 
   // State Management
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -60,9 +60,10 @@ const DashboardNavbar = ({ onMenuClick }: { onMenuClick: () => void }) => {
   audioRef.current = new Audio("/notification.mp3");
 }, []);
 
-  //  Real-time Socket Listener
+
+  //  Real-time Pusher Listener
   useEffect(() => {
-    if (!socket) return;
+    if (!channel) return;
 
     const handleNewNotification = (data: INotification) => {
       const newNotif = {
@@ -82,12 +83,12 @@ const DashboardNavbar = ({ onMenuClick }: { onMenuClick: () => void }) => {
       }
     };
 
-    socket.on("notification", handleNewNotification);
+    channel.bind("notification", handleNewNotification);
 
     return () => {
-      socket.off("notification", handleNewNotification);
+      channel.unbind("notification", handleNewNotification);
     };
-  }, [socket]);
+  }, [channel]);
 
   // 3. Mark as Read & Clear logic
   const clearNotifications = async () => {

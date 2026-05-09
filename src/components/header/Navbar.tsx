@@ -80,8 +80,8 @@ const Navbar = () => {
     },
     { name: "Ecosystem", href: "/ecosystem" },
     { name: "Achievements", href: "/achievements" },
-    { name: session?.user && "Dashboard", href: "/dashboard" }
-  ];
+    ...(session?.user ? [{ name: "Dashboard", href: "/dashboard" }] : [])
+  ] as { name: string; href: string; subLinks?: { name: string; href: string; icon: React.ReactNode }[] }[];
 
   return (
     <nav
@@ -188,7 +188,6 @@ const Navbar = () => {
 
                       <div className="space-y-1">
                         <DropdownItem href="/dashboard" icon={<LayoutDashboard size={16}/>} label="Dashboard" />
-                        <DropdownItem href="/dashboard/ai-charts" icon={<Brain size={16}/>} label="AI Insights Chart" />
                         <DropdownItem href="/dashboard/profile" icon={<User2 size={16}/>} label="Profile" />
                         <DropdownItem href="/dashboard/settings" icon={<Settings size={16}/>} label="Account Settings" />
                       </div>

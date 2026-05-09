@@ -169,14 +169,6 @@ const Sidebar = ({ open, setOpen, isMobile, closeSidebar }: SidebarProps) => {
           onClick={closeSidebar}
         />
 
-        <SidebarItem
-          href="/dashboard/ai-charts"
-          icon={<Brain size={20} />}
-          label="AI Charts"
-          open={open}
-          active={isActive("/dashboard/ai-charts")}
-          onClick={closeSidebar}
-        />
       </nav>
 
       {/* Bottom Section */}
